@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>后台管理 | 青海凿研岩土工程有限公司 ZYYT</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../images/logo.png">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-page="admin">
+  <!-- LOGIN -->
+  <div id="loginView" class="admin-login">
+    <div class="login-card">
+      <img class="logo" src="../images/logo.png" alt="ZYYT">
+      <h2 data-i18n="admin.login.title">后台管理登录</h2>
+      <p class="sub" data-i18n="admin.login.sub">仅限管理员访问</p>
+      <div class="login-error" id="loginError" data-i18n="admin.login.fail">用户名或密码错误</div>
+      <form id="loginForm">
+        <div class="field">
+          <label data-i18n="admin.login.user">用户名</label>
+          <input type="text" id="loginUser" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label data-i18n="admin.login.pass">密码</label>
+          <input type="password" id="loginPass" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="admin.login.btn">登录</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appView" class="admin-wrap" style="display:none">
+    <div class="admin-bar">
+      <div class="container inner">
+        <div class="brand-mini"><img src="../images/logo.png" alt="ZYYT"><span>ZYYT 后台</span></div>
+        <div class="right">
+          <button class="lang-toggle" id="adminLangToggle"><span class="dot"></span><span data-lang-toggle-label>EN</span></button>
+          <span id="adminUser"></span>
+          <a href="#" id="logoutBtn" data-i18n="admin.nav.logout" style="color:#fff;font-weight:600">退出登录</a>
+        </div>
+      </div>
+    </div>
+    <div class="admin-layout">
+      <aside class="admin-side">
+        <a href="#" data-tab="all" class="active" data-i18n="admin.nav.content">内容管理</a>
+        <a href="#" data-tab="profile" data-i18n="admin.nav.profile">修改密码</a>
+      </aside>
+      <main class="admin-main">
+        <!-- list view -->
+        <div id="listView">
+          <h1 data-i18n="admin.title">内容管理</h1>
+          <p class="muted" data-i18n="admin.sub">发布、编辑与删除公司新闻与行业洞察</p>
+          <div class="toolbar">
+            <div class="filters">
+              <button class="chip active" data-filter="all" data-i18n="admin.filter.all">全部</button>
+              <button class="chip" data-filter="news" data-i18n="admin.filter.news">公司新闻</button>
+              <button class="chip" data-filter="insight" data-i18n="admin.filter.insights">行业洞察</button>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <input type="search" id="searchInput" class="field" style="margin:0;min-width:180px" data-i18n-ph="admin.search" placeholder="搜索标题…">
+              <button class="btn btn-primary btn-sm" id="newBtn" data-i18n="admin.new">新建</button>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th style="width:84px">封面</th><th>标题</th><th>类型</th><th>状态</th><th>日期</th><th style="width:120px">操作</th></tr></thead>
+            <tbody id="postRows"></tbody>
+          </table>
+        </div>
+        <!-- profile view -->
+        <div id="profileView" style="display:none;max-width:460px">
+          <h1 data-i18n="admin.profile.title">修改管理员密码</h1>
+          <p class="muted" data-i18n="admin.profile.note">密码以 scrypt 加盐哈希存储，仅本地保存于 data/admin.json。</p>
+          <div class="login-error" id="pwError" style="display:none"></div>
+          <form id="pwForm">
+            <div class="field"><label data-i18n="admin.profile.curpass">当前密码</label><input type="password" id="curPass" required></div>
+            <div class="field"><label data-i18n="admin.profile.newpass">新密码</label><input type="password" id="newPass" required></div>
+            <div class="field"><label data-i18n="admin.profile.repeat">确认新密码</label><input type="password" id="repPass" required></div>
+            <button type="submit" class="btn btn-primary" data-i18n="admin.form.save">保存</button>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-head"><h3 id="modalTitle" data-i18n="admin.new">新建</h3><button class="x" id="modalClose">×</button></div>
+      <div class="modal-body">
+        <form id="postForm">
+          <div class="field">
+            <label data-i18n="admin.form.type">类型</label>
+            <select id="f_type"><option value="news" data-i18n="admin.filter.news">公司新闻</option><option value="insight" data-i18n="admin.filter.insights">行业洞察</option></select>
+          </div>
+          <div class="lang-sep">
+            <div>
+              <div class="lh">中文 / Chinese</div>
+              <div class="field"><label data-i18n="admin.form.titleZh">标题（中文）</label><input id="f_titleZh" required></div>
+              <div class="field"><label data-i18n="admin.form.summaryZh">摘要（中文）</label><textarea id="f_summaryZh"></textarea></div>
+              <div class="field">
+                <label data-i18n="admin.form.bodyZh">正文（中文）</label>
+                <div class="rte-toolbar" id="tb_bodyZh"></div>
+                <div class="rte" id="f_bodyZh" contenteditable="true"></div>
+              </div>
+            </div>
+            <div>
+              <div class="lh">English</div>
+              <div class="field"><label data-i18n="admin.form.titleEn">标题（英文）</label><input id="f_titleEn" required></div>
+              <div class="field"><label data-i18n="admin.form.summaryEn">摘要（英文）</label><textarea id="f_summaryEn"></textarea></div>
+              <div class="field">
+                <label data-i18n="admin.form.bodyEn">正文（英文）</label>
+                <div class="rte-toolbar" id="tb_bodyEn"></div>
+                <div class="rte" id="f_bodyEn" contenteditable="true"></div>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label data-i18n="admin.form.cover">封面图路径</label>
+            <div class="cover-row">
+              <input id="f_cover" placeholder="images/xxx.jpg">
+              <button type="button" class="btn btn-outline btn-sm" id="coverBtn">🖼 <span data-i18n="admin.form.coverPick">上传封面图</span></button>
+            </div>
+            <input type="file" accept="image/*" id="coverInput" style="display:none">
+            <div class="cover-preview" id="coverPreview"></div>
+          </div>
+          <div class="field"><label data-i18n="admin.form.tags">标签</label><input id="f_tags" placeholder="高原, 盐湖"></div>
+          <div class="lang-sep">
+            <div class="field"><label data-i18n="admin.form.status">状态</label>
+              <select id="f_status"><option value="published" data-i18n="common.published">已发布</option><option value="draft" data-i18n="common.draft">草稿</option></select>
+            </div>
+            <div class="field"><label data-i18n="admin.form.publishedAt">发布日期</label><input type="date" id="f_date"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" id="modalCancel" data-i18n="admin.form.cancel">取消</button>
+        <button class="btn btn-primary" id="modalSave" data-i18n="admin.form.save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

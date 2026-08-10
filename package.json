@@ -1,0 +1,13 @@
+{
+  "name": "zyyt-website",
+  "version": "1.0.0",
+  "description": "青海凿研岩土工程有限公司 (ZYYT) 双语官网 + 后台管理",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}
